@@ -42,6 +42,16 @@
   .char-count{font-size:var(--fs-2xs); color:var(--color-ink-soft);}
   .char-count.warn{color:var(--color-rose);}
 
+  .heart-swatches{display:flex; flex-wrap:wrap; gap:12px;}
+  .swatch{
+    width:42px; height:42px; border-radius:50%; border:2px solid transparent; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    background:#f4f6f5; transition:transform .15s ease, border-color .15s ease; position:relative;
+  }
+  .swatch:active{transform:scale(0.92);}
+  .swatch.selected{border-color:var(--color-navy); box-shadow:0 0 0 3px rgba(31,58,95,0.12);}
+  .swatch input{position:absolute; inset:0; opacity:0; cursor:pointer; margin:0;}
+
   .photo-picker{
     border:2px dashed var(--color-line); border-radius:14px; padding:18px; text-align:center;
     color:var(--color-ink-soft); font-size:var(--fs-xs); cursor:pointer; position:relative; transition:border-color .2s, background .2s;
@@ -106,6 +116,10 @@
         <div class="field-foot"><span class="char-count" id="charCount">0/200</span></div>
       </div>
       <div class="field">
+        <label>เลือกสีหัวใจ</label>
+        <div class="heart-swatches" id="heartSwatches"></div>
+      </div>
+      <div class="field">
         <label>แนบรูปคู่กับคุณแม่ <span class="optional-tag">(ไม่แนบก็ได้)</span></label>
         <label class="photo-picker" id="photoPicker">
           <span class="hint-icon">📷</span>
@@ -138,6 +152,33 @@ const CONFIG = {
 };
 const DEMO_MODE = !CONFIG.SCRIPT_URL;
 document.getElementById('demoBanner').style.display = DEMO_MODE ? 'block' : 'none';
+
+const HEART_COLORS = [
+  {name:'red',    label:'แดง',   swatch:'#e74c3c', emoji:'❤️'},
+  {name:'yellow', label:'เหลือง', swatch:'#f1c40f', emoji:'💛'},
+  {name:'pink',   label:'ชมพู',   swatch:'#ff6fa5', emoji:'💗'},
+  {name:'green',  label:'เขียว',  swatch:'#2ecc71', emoji:'💚'},
+  {name:'orange', label:'ส้ม',    swatch:'#e67e22', emoji:'🧡'},
+  {name:'blue',   label:'ฟ้า',    swatch:'#4f8fc4', emoji:'💙'},
+  {name:'purple', label:'ม่วง',   swatch:'#9b59b6', emoji:'💜'},
+  {name:'white',  label:'ขาว',   swatch:'#ffffff', emoji:'🤍'}
+];
+let selectedHeart = 'blue';
+
+(function buildSwatches(){
+  const wrap = document.getElementById('heartSwatches');
+  wrap.innerHTML = HEART_COLORS.map(c => `
+    <label class="swatch${c.name===selectedHeart ? ' selected':''}" style="background:${c.swatch};${c.name==='white' ? 'border-color:#ddd;' : ''}" data-color="${c.name}" title="${c.label}">
+      <input type="radio" name="heartColor" value="${c.name}" ${c.name===selectedHeart ? 'checked':''}>
+    </label>
+  `).join('');
+  wrap.querySelectorAll('.swatch').forEach(el => {
+    el.addEventListener('click', () => {
+      selectedHeart = el.dataset.color;
+      wrap.querySelectorAll('.swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedHeart));
+    });
+  });
+})();
 
 const form = document.getElementById('msgForm');
 const msgInput = document.getElementById('msgInput');
@@ -224,14 +265,17 @@ form.addEventListener('submit', async (e) => {
   formStatus.textContent = 'กำลังส่ง…';
 
   try{
-    const payload = { name, message };
+    const payload = { name, message, heartColor: selectedHeart };
     if(compressedImage){
       payload.imageBase64 = compressedImage.dataUrl.split(',')[1];
       payload.imageMime = compressedImage.mime;
     }
     if(!DEMO_MODE){
+      // ใช้ no-cors เพราะ Apps Script web app ไม่ได้ตั้งค่า CORS header ไว้เสมอไป
+      // เราไม่ได้พึ่งพาการอ่านค่าตอบกลับ จึงไม่กระทบการทำงาน
       await fetch(CONFIG.SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {'Content-Type': 'text/plain;charset=utf-8'},
         body: JSON.stringify(payload)
       });
@@ -257,6 +301,8 @@ document.getElementById('sendAnother').addEventListener('click', () => {
   formStatus.textContent = '';
   successBox.classList.remove('show');
   form.style.display = 'block';
+  selectedHeart = 'blue';
+  document.querySelectorAll('#heartSwatches .swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === 'blue'));
 });
 </script>
 </body>
