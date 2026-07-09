@@ -32,11 +32,11 @@
   @keyframes fall{0%{transform:translateY(-5vh) translateX(0) rotate(0deg);}100%{transform:translateY(105vh) translateX(var(--drift,40px)) rotate(360deg);}}
   @media (prefers-reduced-motion:reduce){
     .petal{display:none;}
-    .board-col-track{animation:none !important;}
+    .mini-track{animation:none !important;}
     .card-inner{animation:none !important;}
   }
 
-  .wrap{position:relative; z-index:1; max-width:1400px; margin:0 auto; padding:20px 24px 40px;}
+  .wrap{position:relative; z-index:1; max-width:1500px; margin:0 auto; padding:20px 24px 40px;}
 
   header.top{display:flex; align-items:center; gap:14px; justify-content:space-between; flex-wrap:wrap;}
   .brand{display:flex; align-items:center; gap:12px;}
@@ -55,21 +55,30 @@
   .hero h1 .flower{font-size:0.7em; vertical-align:middle;}
   .hero p.sub{max-width:640px; margin:10px auto 0; color:var(--color-ink-soft); font-size:var(--fs-md); line-height:1.7;}
 
-  .board-layout{display:flex; gap:26px; margin-top:24px; align-items:flex-start;}
+  .board-layout{display:flex; gap:26px; margin-top:22px; align-items:flex-start;}
 
-  .board-scroll-wrap{
-    flex:1; min-width:0;
-    height:min(1300px, calc(100vh - 250px));
-    min-height:420px;
-    overflow:hidden;
-    position:relative;
-    -webkit-mask-image:linear-gradient(to bottom, transparent 0, black 44px, black calc(100% - 44px), transparent 100%);
-    mask-image:linear-gradient(to bottom, transparent 0, black 44px, black calc(100% - 44px), transparent 100%);
+  /* ---------- carousel stage ---------- */
+  .carousel-stage{
+    flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:22px;
+    height:min(1200px, calc(100vh - 250px)); min-height:420px;
   }
-  .board-columns{display:flex; gap:20px; height:100%;}
-  .board-col{flex:1; min-width:0; overflow:hidden; position:relative; height:100%;}
-  .board-col-track{display:flex; flex-direction:column; gap:20px; will-change:transform;}
-  .board-col-track.scrolling{animation-name:flowDown; animation-timing-function:linear; animation-iteration-count:infinite;}
+  .slot{position:relative; height:100%; transition:flex-basis .7s ease;}
+  .slot-side{flex:0 0 210px; opacity:0.72; transform:scale(0.97); transition:opacity .5s ease;}
+  .slot-center{flex:0 0 460px;}
+  @media (max-width:1150px){ .slot-side{flex-basis:170px;} .slot-center{flex-basis:380px;} }
+  @media (max-width:900px){ .slot-side{display:none;} .slot-center{flex-basis:100%;} }
+
+  .mini-board{position:relative; height:100%; border-radius:22px; transition:opacity .4s ease, transform .4s ease;}
+  .mini-board.fading{opacity:0; transform:scale(0.95);}
+  .mini-scroll{
+    height:100%; overflow:hidden; position:relative;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0, black 36px, black calc(100% - 36px), transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0, black 36px, black calc(100% - 36px), transparent 100%);
+  }
+  .mini-columns{display:flex; gap:14px; height:100%;}
+  .mini-col{flex:1; min-width:0; overflow:hidden; position:relative; height:100%;}
+  .mini-track{display:flex; flex-direction:column; gap:14px; will-change:transform;}
+  .mini-track.scrolling{animation-name:flowDown; animation-timing-function:linear; animation-iteration-count:infinite;}
   @keyframes flowDown{ from{transform:translateY(-50%);} to{transform:translateY(0%);} }
 
   .board-empty{padding:60px 20px; text-align:center; color:var(--color-ink-soft); font-size:var(--fs-md); flex:1;}
@@ -79,39 +88,43 @@
     border-radius:6px; box-shadow:0 10px 20px -10px rgba(31,58,95,0.35), 0 1px 0 rgba(255,255,255,0.6) inset;
     transform:rotate(var(--rot,0deg));
   }
+  .slot-center .card{box-shadow:0 14px 28px -12px rgba(31,58,95,0.42), 0 1px 0 rgba(255,255,255,0.6) inset;}
   .card-inner{
-    padding:18px 16px 16px;
+    padding:14px 13px 12px;
     animation:sway var(--sway-dur,7s) ease-in-out infinite;
     animation-delay:var(--sway-delay,0s);
     transform-origin:50% 0%;
   }
+  .slot-center .card-inner{padding:18px 16px 16px;}
   @keyframes sway{0%,100%{transform:rotate(-1.1deg);}50%{transform:rotate(1.1deg);}}
-  .card.is-new{animation:pop 0.7s ease;}
-  @keyframes pop{0%{transform:scale(0.7) rotate(var(--rot,0deg)); opacity:0;}70%{transform:scale(1.04) rotate(var(--rot,0deg));}100%{transform:scale(1) rotate(var(--rot,0deg));}}
 
-  .pin{position:absolute; top:-8px; left:50%; transform:translateX(-50%); z-index:2;
-    width:16px; height:16px; border-radius:50%;
+  .pin{position:absolute; top:-7px; left:50%; transform:translateX(-50%); z-index:2;
+    width:14px; height:14px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #f3e6b0, var(--pin) 60%, #a88f4f 100%);
     box-shadow:0 3px 4px rgba(0,0,0,0.25);}
+  .slot-center .pin{width:16px; height:16px; top:-8px;}
 
-  .card .heart{font-size:1.1rem; margin-bottom:6px; display:block;}
-  .card p.msg{font-family:'Sarabun'; font-size:var(--fs-sm); line-height:1.6; color:var(--color-ink); margin:0 0 14px; min-height:1.6em;}
-  .card .who{font-size:var(--fs-2xs); color:var(--color-blue); font-weight:700; text-align:right;}
+  .card .heart{font-size:1rem; margin-bottom:5px; display:block;}
+  .card p.msg{font-family:'Sarabun'; font-size:var(--fs-xs); line-height:1.55; color:var(--color-ink); margin:0 0 10px; min-height:1.5em;}
+  .slot-center .card p.msg{font-size:var(--fs-sm); margin-bottom:14px;}
+  .card .who{font-size:0.66rem; color:var(--color-blue); font-weight:700; text-align:right;}
+  .slot-center .card .who{font-size:var(--fs-2xs);}
   .card .who::before{content:"— ";}
 
-  .card.photo .card-inner{padding:10px 10px 12px;}
-  .card.photo img{width:100%; display:block; border-radius:3px; margin-bottom:10px; background:#eee; aspect-ratio:4/3; object-fit:cover;}
-  .card.photo p.msg{padding:0 6px; margin-bottom:8px;}
-  .card.photo .who{padding:0 6px 2px;}
-  .img-fallback{background:#f0f0ec; border-radius:3px; margin-bottom:10px; aspect-ratio:4/3;
-    display:flex; align-items:center; justify-content:center; color:var(--color-ink-soft); font-size:var(--fs-2xs); text-align:center; padding:8px;}
+  .card.photo .card-inner{padding:8px 8px 10px;}
+  .slot-center .card.photo .card-inner{padding:10px 10px 12px;}
+  .card.photo img{width:100%; display:block; border-radius:3px; margin-bottom:8px; background:#eee; aspect-ratio:4/3; object-fit:cover;}
+  .card.photo p.msg{padding:0 4px; margin-bottom:6px;}
+  .card.photo .who{padding:0 4px 2px;}
+  .img-fallback{background:#f0f0ec; border-radius:3px; margin-bottom:8px; aspect-ratio:4/3;
+    display:flex; align-items:center; justify-content:center; color:var(--color-ink-soft); font-size:0.62rem; text-align:center; padding:6px;}
 
   /* ---------- QR sidebar ---------- */
-  .sidebar{width:300px; flex-shrink:0; position:sticky; top:20px;}
+  .sidebar{width:290px; flex-shrink:0; position:sticky; top:20px;}
   .qr-card{background:#fff; border-radius:20px; padding:26px 22px 22px; box-shadow:0 16px 34px -20px rgba(31,58,95,0.4); text-align:center;}
   .qr-card h3{font-family:'Noto Serif Thai'; color:var(--color-navy); font-size:var(--fs-lg); margin:0 0 16px;}
   .qr-card .qr-box{background:#fff; border:1px solid var(--color-line); border-radius:14px; padding:14px; display:inline-block;}
-  .qr-card .qr-box svg{display:block; width:180px; height:180px;}
+  .qr-card .qr-box svg{display:block; width:170px; height:170px;}
   .qr-card .qr-link{display:block; margin:12px 0 4px; font-size:var(--fs-2xs); color:var(--color-blue); word-break:break-all;}
   .qr-steps{text-align:left; margin:18px 0 0; padding:0; list-style:none; font-size:var(--fs-xs); color:var(--color-ink-soft); line-height:1.9;}
   .qr-steps li{display:flex; gap:8px;}
@@ -127,7 +140,7 @@
     .board-layout{flex-direction:column;}
     .sidebar{width:100%; position:static;}
     .qr-card{max-width:340px; margin:0 auto;}
-    .board-scroll-wrap{height:min(900px, 62vh);}
+    .carousel-stage{height:min(900px, 62vh);}
   }
 </style>
 </head>
@@ -153,8 +166,10 @@
   <div id="loadError" class="load-error">โหลดข้อความไม่สำเร็จ ตรวจสอบว่าตั้งค่า Sheet ID / การแชร์สิทธิ์ถูกต้องหรือยัง</div>
 
   <div class="board-layout">
-    <div class="board-scroll-wrap" id="boardScrollWrap">
-      <div class="board-columns" id="boardColumns"></div>
+    <div class="carousel-stage" id="carouselStage">
+      <div class="slot slot-side" id="slotLeft"><div class="mini-board" id="miniLeft"></div></div>
+      <div class="slot slot-center" id="slotCenter"><div class="mini-board" id="miniCenter"></div></div>
+      <div class="slot slot-side" id="slotRight"><div class="mini-board" id="miniRight"></div></div>
     </div>
 
     <aside class="sidebar">
@@ -187,8 +202,10 @@ const CONFIG = {
   SHEET_ID: "1bJFkqSEhri0mdOuXoYgXtBwzb5Rp84f-KxqiopXpKMc",
   SHEET_NAME: "Messages",
   SUBMIT_PAGE: "submit.html",
-  POLL_INTERVAL_MS: 7000,
-  SCROLL_SPEED_PX_PER_SEC: 26
+  POLL_INTERVAL_MS: 8000,
+  ROTATE_INTERVAL_MS: 10000,
+  PAGE_SIZE: 4,
+  SCROLL_SPEED_PX_PER_SEC: 20
 };
 
 const DEMO_MODE = !CONFIG.SHEET_ID;
@@ -226,10 +243,7 @@ const HEART_EMOJI = {
   link.textContent = submitUrl;
 })();
 
-/* ---------- state ---------- */
-let messages = [];
-let lastSignature = '';
-
+/* ---------- helpers ---------- */
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -240,6 +254,11 @@ function handleImgError(img){
   img.replaceWith(fallback);
 }
 window.handleImgError = handleImgError;
+function hashStr(s){
+  let h = 0;
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  return h;
+}
 
 function parseCsv(text){
   const rows = []; let row=[], field='', inQuotes=false;
@@ -266,14 +285,24 @@ const DEMO_SEED = [
   {ts:'d3', name:'บด', message:'บอกรักแม่ แค่โอนเงิน', image:'', heartColor:'yellow'},
   {ts:'d4', name:'Benz HR', message:'รักนะ โกปิโก้', image:'', heartColor:'green'},
   {ts:'d5', name:'คนสวย', message:'รักแม่เท่าผช', image:'', heartColor:'red'},
-  {ts:'d6', name:'<3', message:'Love U', image:'', heartColor:'purple'}
+  {ts:'d6', name:'<3', message:'Love U', image:'', heartColor:'purple'},
+  {ts:'d7', name:'สวีดัด', message:'สวัสดี', image:'', heartColor:'orange'},
+  {ts:'d8', name:'โอ๊ะ', message:'โอ๊ะ', image:'', heartColor:'white'},
+  {ts:'d9', name:'HR', message:'ยินดีต้อนรับเข้างาน', image:'', heartColor:'blue'}
 ];
+
+/* ---------- data state ---------- */
+let messages = [];
+let pages = [];
+let centerIdx = 0;
+let lastFreshTs = '';
+let carouselStarted = false;
 
 async function fetchMessages(){
   document.getElementById('loadError').style.display = 'none';
   if(DEMO_MODE){
     messages = DEMO_SEED.slice().reverse();
-    renderBoard();
+    afterFetch();
     return;
   }
   try{
@@ -291,22 +320,124 @@ async function fetchMessages(){
       heartColor: (r[4] || '').trim().toLowerCase()
     })).filter(m => m.message.length > 0 || m.image.length > 0);
     messages = parsed.reverse();
-    renderBoard();
+    afterFetch();
   }catch(err){
     console.error('fetchMessages error', err);
     document.getElementById('loadError').style.display = 'block';
   }
 }
 
-function cardHtml(m, isNew){
+function afterFetch(){
+  document.getElementById('counterText').textContent =
+    messages.length > 0 ? `มีข้อความแล้ว ${messages.length} ข้อความ` : 'ยังไม่มีข้อความ';
+
+  pages = chunkIntoPages(messages, CONFIG.PAGE_SIZE);
+
+  if(!pages.length){
+    ['miniLeft','miniCenter','miniRight'].forEach(id => {
+      document.getElementById(id).innerHTML = '';
+    });
+    if(!carouselStarted){
+      document.getElementById('miniCenter').innerHTML = '<div class="board-empty">ยังไม่มีข้อความ — สแกน QR แล้วเป็นคนแรกที่บอกรักแม่กันเถอะ 💙</div>';
+    }
+    return;
+  }
+
+  if(!carouselStarted){
+    carouselStarted = true;
+    lastFreshTs = pages[0][0] ? pages[0][0].ts : '';
+    renderCarousel(true);
+    setInterval(rotateTick, CONFIG.ROTATE_INTERVAL_MS);
+  }
+  // ถ้ายังไม่ถึงรอบหมุน ให้แค่เก็บข้อมูลไว้ก่อน จะไปใช้ตอน rotateTick ครั้งถัดไป
+}
+
+function chunkIntoPages(list, size){
+  const out = [];
+  for(let i=0;i<list.length;i+=size){ out.push(list.slice(i, i+size)); }
+  return out;
+}
+
+function padPages(list){
+  if(!list.length) return list;
+  const out = list.slice();
+  while(out.length < 3) out.push(list[out.length % list.length]);
+  return out;
+}
+
+function rotateTick(){
+  if(!pages.length) return;
+  const p = padPages(pages);
+  const freshTs = p[0][0] ? p[0][0].ts : '';
+  if(freshTs && freshTs !== lastFreshTs){
+    centerIdx = 0; // มีข้อความใหม่ → ดึงมาไว้ตรงกลางทันที
+    lastFreshTs = freshTs;
+  } else {
+    centerIdx = (centerIdx + 1) % p.length;
+  }
+  renderCarousel(false);
+}
+
+function renderCarousel(isInitial){
+  const p = padPages(pages);
+  const n = p.length;
+  const leftPage = p[(centerIdx + 1) % n];
+  const centerPage = p[centerIdx % n];
+  const rightPage = p[(centerIdx - 1 + n) % n];
+
+  updateSlot('miniLeft', leftPage, 1, isInitial);
+  updateSlot('miniCenter', centerPage, 2, isInitial);
+  updateSlot('miniRight', rightPage, 1, isInitial);
+}
+
+function updateSlot(elId, pageMsgs, numCols, isInitial){
+  const el = document.getElementById(elId);
+  const build = () => {
+    el.innerHTML = buildMiniBoardHtml(pageMsgs, numCols);
+    requestAnimationFrame(() => startColumnFlow(el));
+  };
+  if(isInitial){
+    build();
+  } else {
+    el.classList.add('fading');
+    setTimeout(() => {
+      build();
+      el.classList.remove('fading');
+    }, 380);
+  }
+}
+
+function buildMiniBoardHtml(pageMsgs, numCols){
+  if(!pageMsgs || !pageMsgs.length) return '';
+  const cols = Array.from({length:numCols}, () => []);
+  pageMsgs.forEach((m, i) => cols[i % numCols].push(m));
+  const colsHtml = cols.map(colMsgs => {
+    if(!colMsgs.length) return '<div class="mini-col"></div>';
+    const cardsHtml = colMsgs.map(m => cardHtml(m)).join('');
+    return `<div class="mini-col"><div class="mini-track">${cardsHtml}${cardsHtml}</div></div>`;
+  }).join('');
+  return `<div class="mini-scroll"><div class="mini-columns">${colsHtml}</div></div>`;
+}
+
+function startColumnFlow(container){
+  container.querySelectorAll('.mini-track').forEach(track => {
+    const halfHeight = track.scrollHeight / 2;
+    if(halfHeight < 40) return;
+    const duration = Math.max(16, halfHeight / CONFIG.SCROLL_SPEED_PX_PER_SEC);
+    track.style.animationDuration = duration.toFixed(1) + 's';
+    track.classList.add('scrolling');
+  });
+}
+
+function cardHtml(m){
   const heart = HEART_EMOJI[m.heartColor] || HEART_EMOJI.blue;
-  const rot = (( (hashStr(m.ts + m.name) % 70) - 35) / 10).toFixed(1); // -3.5deg .. 3.5deg
+  const rot = (((hashStr(m.ts + m.name) % 70) - 35) / 10).toFixed(1);
   const swayDur = (6 + (hashStr(m.ts) % 5)).toFixed(1);
   const swayDelay = ((hashStr(m.name + m.message) % 30)/10).toFixed(1);
   const style = `--rot:${rot}deg; --sway-dur:${swayDur}s; --sway-delay:${swayDelay}s;`;
   if(m.image){
     return `
-      <div class="card photo${isNew ? ' is-new':''}" style="${style}">
+      <div class="card photo" style="${style}">
         <div class="pin"></div>
         <div class="card-inner">
           <img src="${escapeHtml(m.image)}" alt="รูปภาพจาก ${escapeHtml(m.name)}" loading="lazy" onerror="handleImgError(this)">
@@ -316,7 +447,7 @@ function cardHtml(m, isNew){
       </div>`;
   }
   return `
-    <div class="card${isNew ? ' is-new':''}" style="${style}">
+    <div class="card" style="${style}">
       <div class="pin"></div>
       <div class="card-inner">
         <span class="heart">${heart}</span>
@@ -324,58 +455,6 @@ function cardHtml(m, isNew){
         <div class="who">${escapeHtml(m.name)}</div>
       </div>
     </div>`;
-}
-
-function hashStr(s){
-  let h = 0;
-  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
-  return h;
-}
-
-function columnCount(){
-  const w = window.innerWidth;
-  if(w >= 1100) return 5;
-  if(w >= 720) return 3;
-  return 2;
-}
-
-function renderBoard(){
-  const counter = document.getElementById('counterText');
-  counter.textContent = messages.length > 0 ? `มีข้อความแล้ว ${messages.length} ข้อความ` : 'ยังไม่มีข้อความ';
-
-  const signature = messages.length + '|' + (messages[0] ? messages[0].ts : '');
-  if(signature === lastSignature) return; // nothing new, keep current animation running smoothly
-  const isFirstRender = lastSignature === '';
-  lastSignature = signature;
-
-  const columnsEl = document.getElementById('boardColumns');
-
-  if(!messages.length){
-    columnsEl.innerHTML = '<div class="board-empty">ยังไม่มีข้อความ — สแกน QR แล้วเป็นคนแรกที่บอกรักแม่กันเถอะ 💙</div>';
-    return;
-  }
-
-  const numCols = columnCount();
-  const cols = Array.from({length:numCols}, () => []);
-  messages.slice(0, 90).forEach((m, i) => cols[i % numCols].push({m, isNew: !isFirstRender && i < numCols}));
-
-  columnsEl.innerHTML = cols.map(colCards => {
-    if(!colCards.length) return '<div class="board-col"></div>';
-    const cardsHtml = colCards.map(c => cardHtml(c.m, c.isNew)).join('');
-    // duplicate content for seamless looping scroll
-    return `<div class="board-col"><div class="board-col-track">${cardsHtml}${cardsHtml}</div></div>`;
-  }).join('');
-
-  // set scroll speed per column based on rendered height
-  requestAnimationFrame(() => {
-    columnsEl.querySelectorAll('.board-col-track').forEach(track => {
-      const halfHeight = track.scrollHeight / 2;
-      if(halfHeight < 40) return; // too short to bother animating
-      const duration = Math.max(18, halfHeight / CONFIG.SCROLL_SPEED_PX_PER_SEC);
-      track.style.animationDuration = duration.toFixed(1) + 's';
-      track.classList.add('scrolling');
-    });
-  });
 }
 
 fetchMessages();
